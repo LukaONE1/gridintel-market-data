@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#071321">
+<title>GRIDINTEL — NFL Market Intelligence</title>
+<style>
+:root{--bg:#071321;--panel:#10263b;--panel2:#0b1c2d;--line:#29435c;--text:#f4f8fc;--muted:#a9bed3;--teal:#20d9b2;--blue:#087cf0;--amber:#ffca7a;--red:#ff8d8d}
+*{box-sizing:border-box}body{margin:0;background:#06101b;color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{padding:20px 16px 16px;background:linear-gradient(145deg,#071321,#102c45);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:3}
+.wrap{max-width:980px;margin:auto}.brand{font-size:25px;font-weight:900;letter-spacing:.6px}.brand span{color:var(--teal)}.tag{font-size:11px;letter-spacing:1.4px;color:var(--muted);margin-top:2px}
+.headrow{display:flex;justify-content:space-between;align-items:center;gap:12px}.pill{border:1px solid #7b5a27;background:#332a19;color:var(--amber);padding:5px 9px;border-radius:99px;font-size:11px;font-weight:800}
+nav{display:flex;gap:7px;overflow:auto;padding-top:16px}nav button,.btn{border:0;border-radius:10px;padding:10px 13px;background:#18334d;color:#fff;font-weight:700;cursor:pointer;white-space:nowrap}nav button.active,.btn.primary{background:var(--blue)}button:focus,input:focus,select:focus{outline:2px solid var(--teal);outline-offset:2px}
+main{max-width:980px;margin:auto;padding:16px;display:grid;gap:14px}.hero{background:linear-gradient(135deg,#0c2033,#102b43);border:1px solid var(--line);border-radius:17px;padding:19px}.eyebrow{color:var(--teal);font-weight:800;font-size:11px;letter-spacing:1.4px}.hero h1{font-size:27px;line-height:1.12;margin:8px 0}.hero p{color:var(--muted);margin:8px 0 0}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat,.card{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px}.stat small,.muted{color:var(--muted)}.stat strong{display:block;font-size:23px;margin-top:4px}
+.card h2{font-size:18px;margin:0 0 10px}.card h3{font-size:15px;margin:0 0 8px}.row{display:flex;gap:10px;align-items:center;justify-content:space-between}.stack{display:grid;gap:10px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 5px}input,select,textarea{width:100%;border:1px solid var(--line);background:#071522;color:var(--text);padding:11px;border-radius:9px;font:inherit}input[type=number]{appearance:textfield} .field{min-width:0}
+.btn{display:inline-block}.btn.secondary{background:#18334d}.btn.danger{background:#4a2029}.btn.small{padding:7px 9px;font-size:12px}
+.notice{padding:11px 12px;border-radius:10px;background:#2d281a;border:1px solid #66502b;color:var(--amber);font-size:13px}.success{color:var(--teal)}.bad{color:var(--red)}.source{border:1px solid var(--line);border-radius:11px;padding:12px;background:#0a1a2a}.source p{margin:5px 0;color:var(--muted);font-size:13px}
+.marketlist{display:grid;gap:8px}.marketitem{padding:11px;border:1px solid var(--line);border-radius:10px;background:#071522}.marketitem strong{display:block}.marketitem small{color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:9px 6px;border-bottom:1px solid var(--line)}th{color:var(--muted);font-weight:600}
+.hidden{display:none!important}.foot{font-size:12px;color:var(--muted);text-align:center;padding:5px 0 22px}
+@media(min-width:720px){main{grid-template-columns:1fr 1fr}.wide{grid-column:1/-1}.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.hero{grid-column:1/-1}.hero h1{font-size:34px}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+ <div class="headrow"><div><div class="brand">GRID<span>INTEL</span></div><div class="tag">NFL MARKET INTELLIGENCE</div></div><span class="pill">PERSONAL BETA · V1</span></div>
+ <nav aria-label="Main navigation"><button class="active" data-tab="dashboard">Dashboard</button><button data-tab="builder">Parlay Lab</button><button data-tab="markets">Market Signals</button><button data-tab="tracker">Prediction Tracker</button></nav>
+</div></header>
+<main>
+<section class="hero">
+ <div class="eyebrow">FOLLOW THE MONEY. TEST THE EDGE.</div>
+ <h1>NFL market intelligence,<br>without the guesswork.</h1>
+ <p>Compare observable market signals, calculate three-leg parlay scenarios in familiar American odds, and keep an honest record of every prediction.</p>
+ <div style="margin-top:14px" class="notice">Important: this beta is an analysis and paper-tracking tool, not betting advice. No picks are currently verified as profitable. Confirm every price directly with the provider before relying on it.</div>
+</section>
+<section class="stats wide">
+ <div class="stat"><small>Saved predictions</small><strong id="statCount">0</strong></div>
+ <div class="stat"><small>Settled win rate</small><strong id="statWin">—</strong></div>
+ <div class="stat"><small>Paper net P/L</small><strong id="statPL">$0.00</strong></div>
+ <div class="stat"><small>Market feed</small><strong style="font-size:17px" id="statFeed">Not checked</strong></div>
+</section>
+
+<section id="dashboard" class="card wide">
+ <div class="row"><h2>Today's workflow</h2><span class="pill">NFL · BALANCED</span></div>
+ <div class="two">
+  <div class="source"><h3>1 · Market context</h3><p>Load public Kalshi market data where accessible. Volume and price movement are signals—not proof of informed or profitable traders.</p><button class="btn primary" id="loadKalshi">Check Kalshi markets</button></div>
+  <div class="source"><h3>2 · Compare prices</h3><p>Novig and FanDuel are not connected in this beta. Enter current FanDuel American odds in Parlay Lab only after verifying them yourself.</p><button class="btn secondary" data-goto="builder">Open Parlay Lab</button></div>
+ </div>
+ <div id="kalshiStatus" class="notice" style="margin-top:12px">Kalshi: not checked. Tap “Check Kalshi markets” to attempt a public API request from this browser. Browser/network restrictions may block it.</div>
+ <div id="kalshiResults" class="marketlist" style="margin-top:10px"></div>
+</section>
+
+<section id="builder" class="card hidden">
+ <div class="row"><h2>Three-leg Parlay Lab</h2><span class="pill">CALCULATOR</span></div>
+ <p class="muted" style="font-size:13px">Enter American odds as shown by FanDuel (e.g. -110 or +150). The probability inputs are your/model estimates, not live predictions.</p>
+ <div class="stack" id="legs">
+  <div class="source"><h3>Leg 1</h3><div class="two"><div class="field"><label>Selection / market</label><input id="name1" value="Example selection 1"></div><div class="field"><label>American odds</label><input id="odds1" type="number" value="-110"></div></div><div class="field" style="margin-top:9px"><label>Estimated win probability (%)</label><input id="prob1" type="number" min="1" max="99" value="55"></div></div>
+  <div class="source"><h3>Leg 2</h3><div class="two"><div class="field"><label>Selection / market</label><input id="name2" value="Example selection 2"></div><div class="field"><label>American odds</label><input id="odds2" type="number" value="-110"></div></div><div class="field" style="margin-top:9px"><label>Estimated win probability (%)</label><input id="prob2" type="number" min="1" max="99" value="55"></div></div>
+  <div class="source"><h3>Leg 3</h3><div class="two"><div class="field"><label>Selection / market</label><input id="name3" value="Example selection 3"></div><div class="field"><label>American odds</label><input id="odds3" type="number" value="-110"></div></div><div class="field" style="margin-top:9px"><label>Estimated win probability (%)</label><input id="prob3" type="number" min="1" max="99" value="55"></div></div>
+ </div>
+ <div class="two"><div><label>Hypothetical stake ($)</label><input id="stake" type="number" min="0.01" step=".01" value="10"></div><div><label>Correlation check</label><select id="corr"><option value="unknown">Not checked</option><option value="low">No obvious link identified</option><option value="high">Related legs / same-game link</option></select></div></div>
+ <button class="btn primary" id="calc">Calculate parlay</button>
+ <div class="source" id="calcOutput" aria-live="polite"><p class="muted">Calculations will appear here. Starting values are illustrative only.</p></div>
+ <button class="btn secondary" id="savePrediction">Save as paper prediction</button>
+ <p class="muted" style="font-size:12px">Parlay odds multiplication assumes a conventional accumulator; sportsbook same-game parlay prices may be adjusted for correlation. Treat the calculation as an estimate until the exact offered payout is confirmed.</p>
+</section>
+
+<section id="markets" class="card hidden">
+ <h2>Market Signals</h2>
+ <div class="notice">Source status is shown honestly. A Kalshi market feed does not expose a public leaderboard of each trader's full positions or profitability.</div>
+ <div class="source" style="margin-top:10px"><h3>Kalshi</h3><p>Public markets, prices, volume and order-book data may be accessible. The dashboard request is a basic discovery attempt, not yet a normalized NFL-specific signal model.</p><a href="https://docs.kalshi.com/getting_started/quick_start_market_data" target="_blank" rel="noopener" style="color:var(--teal)">Official API guide ↗</a></div>
+ <div class="source" style="margin-top:10px"><h3>Novig</h3><p>Not connected. Need to verify authorized API/data access and market mapping before showing any live values.</p><a href="https://support.novig.com/en/articles/10336081-what-is-novig" target="_blank" rel="noopener" style="color:var(--teal)">Novig overview ↗</a></div>
+ <div class="source" style="margin-top:10px"><h3>FanDuel</h3><p>Not connected. Verify the current line in the FanDuel app or an authorized odds provider; do not treat manually entered prices as verified feed data.</p><a href="https://sportsbook.fanduel.com/" target="_blank" rel="noopener" style="color:var(--teal)">FanDuel Sportsbook ↗</a></div>
+</section>
+
+<section id="tracker" class="card hidden">
+ <div class="row"><h2>Prediction Tracker</h2><button id="export" class="btn secondary small">Export CSV</button></div>
+ <p class="muted" style="font-size:13px">Records are saved in this browser on this device. Clearing browser data may remove them; export a backup periodically.</p>
+ <div id="records" class="marketlist"></div>
+</section>
+<div class="foot wide">GRIDINTEL personal beta · Demo inputs are not live recommendations · No wagers are placed by this app.</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let currentCalc=null;
+function getRecords(){try{return JSON.parse(localStorage.getItem('gridintel_records_v1')||'[]')}catch(e){return []}}
+function setRecords(r){localStorage.setItem('gridintel_records_v1',JSON.stringify(r));renderRecords()}
+function money(n){return (n<0?'-$':'$')+Math.abs(n).toFixed(2)}
+function americanToDecimal(a){a=Number(a);if(!Number.isFinite(a)||a===0)return null;return a>0?1+a/100:1+100/Math.abs(a)}
+function implied(a){a=Number(a);return a>0?100/(a+100):100/(Math.abs(a)+100)}
+function renderStats(){let r=getRecords(),s=r.filter(x=>x.status==='Win'||x.status==='Loss'),w=s.filter(x=>x.status==='Win').length,pl=s.reduce((a,x)=>a+x.profit,0);$('statCount').textContent=r.length;$('statWin').textContent=s.length?(100*w/s.length).toFixed(1)+'%':'—';$('statPL').textContent=money(pl);$('statPL').style.color=pl>=0?'var(--teal)':'var(--red)'}
+function renderRecords(){let r=getRecords();$('records').innerHTML='';if(!r.length){$('records').innerHTML='<div class="source"><p class="muted">No saved predictions yet. Use Parlay Lab to create your first paper record.</p></div>';renderStats();return}
+r.slice().reverse().forEach(x=>{let el=document.createElement('div');el.className='marketitem';let status=x.status;el.innerHTML=`<div class="row"><strong>${esc(x.title)}</strong><span class="pill">${esc(status)}</span></div><small>${esc(x.created)} · ${esc(x.kind)}</small><p style="margin:8px 0">American odds: ${x.legs.map(l=>esc(l.odds)).join(' / ')} · Estimated hit rate: ${x.prob.toFixed(2)}%</p><div class="row"><span>Stake ${money(x.stake)}</span><strong>${status==='Pending'?'Pending':money(x.profit)}</strong></div>${status==='Pending'?`<div class="row" style="margin-top:9px"><button class="btn small primary" data-settle="${x.id}" data-status="Win">Mark win</button><button class="btn small danger" data-settle="${x.id}" data-status="Loss">Mark loss</button><button class="btn small secondary" data-settle="${x.id}" data-status="Void">Void</button></div>`:''}`;$('records').appendChild(el)});renderStats()}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function calculate(){let legs=[];for(let i=1;i<=3;i++){let a=Number($('odds'+i).value),p=Number($('prob'+i).value),d=americanToDecimal(a),name=$('name'+i).value.trim();if(!d||p<=0||p>=100||!name){$('calcOutput').innerHTML='<p class="bad">Check all selections, American odds, and probability inputs.</p>';return null}legs.push({name,odds:(a>0?'+':'')+a,american:a,decimal:d,prob:p/100,implied:implied(a)/100})}
+let stake=Number($('stake').value);if(!(stake>0)){ $('calcOutput').innerHTML='<p class="bad">Enter a stake greater than zero.</p>';return null}
+let joint=legs.reduce((v,l)=>v*l.prob,1),dec=legs.reduce((v,l)=>v*l.decimal,1),payout=stake*dec,ev=stake*(joint*dec-1),corr=$('corr').value;
+currentCalc={legs,stake,joint,dec,payout,ev,corr};
+let hold=corr!=='low';
+$('calcOutput').innerHTML=`<div class="row"><span class="muted">Combined decimal odds (internal)</span><strong>${dec.toFixed(2)}</strong></div><div class="row"><span class="muted">Approx. combined American odds</span><strong>${dec>=2?'+'+Math.round((dec-1)*100):'-'+Math.round(100/(dec-1))}</strong></div><div class="row"><span class="muted">Estimated joint probability</span><strong>${(joint*100).toFixed(2)}%</strong></div><div class="row"><span class="muted">Gross payout if all win</span><strong>${money(payout)}</strong></div><div class="row"><span class="muted">Net expected value (model inputs)</span><strong class="${ev>=0?'success':'bad'}">${ev>=0?'+':''}${money(ev)}</strong></div><p class="${hold?'bad':'success'}" style="margin-bottom:0">${hold?'HOLD: correlation is not cleared. This math assumes independence and is not a recommendation.':'Correlation marked as no obvious link; independence is still unverified. Not a verified recommendation.'}</p><p class="muted" style="font-size:12px">Each leg's break-even probability: ${legs.map(l=>(l.implied*100).toFixed(1)+'%').join(' · ')}. EV is only as reliable as the entered probability estimates and ignores price changes, pushes, voids and any special same-game payout adjustments.</p>`;
+return currentCalc}
+$('calc').addEventListener('click',calculate);
+$('savePrediction').addEventListener('click',()=>{let c=calculate();if(!c)return;let r=getRecords();r.push({id:Date.now().toString(),created:new Date().toLocaleString(),title:'NFL 3-leg paper test',kind:'Manual/demo inputs',status:'Pending',stake:c.stake,profit:0,legs:c.legs.map(l=>({name:l.name,odds:l.odds,decimal:l.decimal,prob:l.prob})),prob:c.joint*100,dec:c.dec,ev:c.ev,corr:c.corr});setRecords(r);alert('Saved as a pending paper prediction on this device. Confirm all prices and inputs; this is not a live feed snapshot.')});
+$('records').addEventListener('click',e=>{let b=e.target.closest('[data-settle]');if(!b)return;let id=b.dataset.settle,status=b.dataset.status,r=getRecords(),x=r.find(z=>z.id===id);if(!x||x.status!=='Pending')return;if(status==='Void'){x.status='Void';x.profit=0}else if(status==='Win'){x.status='Win';x.profit=x.stake*(x.dec-1)}else{x.status='Loss';x.profit=-x.stake}setRecords(r)});
+$('export').addEventListener('click',()=>{let r=getRecords();let rows=[['id','created','title','status','stake','profit','estimated_probability_pct','combined_decimal_odds','correlation','legs']];r.forEach(x=>rows.push([x.id,x.created,x.title,x.status,x.stake,x.profit,x.prob,x.dec,x.corr,x.legs.map(l=>`${l.name} (${l.odds})`).join('; ')]));let csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n'),blob=new Blob([csv],{type:'text/csv'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='gridintel-paper-tracker.csv';a.click();URL.revokeObjectURL(url)});
+async function loadKalshi(){let status=$('kalshiStatus'),out=$('kalshiResults');status.textContent='Checking Kalshi public API…';out.innerHTML='';try{
+let url='/api/kalshi/markets';
+let res=await fetch(url,{headers:{'Accept':'application/json'},cache:'no-store'});if(!res.ok)throw new Error('GRIDINTEL data service HTTP '+res.status);let data=await res.json();let ms=(data.markets||[]).slice(0,25);
+status.textContent=`Request succeeded at ${new Date().toLocaleTimeString()}. Received ${data.markets?.length||0} open markets; ${ms.length} matched basic football keywords. Verify each market's meaning, price and freshness before using.`;
+$('statFeed').textContent='Request succeeded';if(!ms.length){out.innerHTML='<div class="marketitem">No NFL-related market titles matched this basic filter. This does not mean no NFL markets exist; inspect Kalshi directly and improve the event mapping.</div>';return}
+ms.forEach(m=>{let el=document.createElement('div');el.className='marketitem';el.innerHTML=`<strong>${esc(m.title||m.ticker||'Untitled market')}</strong><small>${esc(m.ticker||'No ticker')} · volume ${esc(m.volume_fp??m.volume??'not reported')} · status ${esc(m.status||'unknown')}</small><small style="display:block;margin-top:5px">Yes bid ${esc(m.yes_bid_dollars??'n/a')} · Yes ask ${esc(m.yes_ask_dollars??'n/a')} · Updated ${new Date().toLocaleTimeString()}</small>`;out.appendChild(el)})
+}catch(e){status.textContent='Could not retrieve public market data in this browser ('+e.message+'). This may be a network or browser CORS restriction. No live values are being shown.';$('statFeed').textContent='Unavailable';out.innerHTML='<div class="marketitem"><strong>Connection not verified</strong><small>Use the official Kalshi site/API docs to inspect current markets. A backend proxy may be needed for a reliable app connection.</small></div>'}}
+$('loadKalshi').addEventListener('click',loadKalshi);
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.goto)));
+function showTab(id){document.querySelectorAll('main>section[id]').forEach(s=>s.classList.toggle('hidden',s.id!==id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));window.scrollTo({top:0,behavior:'smooth'})}
+renderRecords();showTab('dashboard');
+</script>
+</body></html>
