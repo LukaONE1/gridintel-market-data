@@ -1,0 +1,30 @@
+
+name: GRIDINTEL NFL Model Tests
+
+on:
+  push:
+    branches:
+      - v0.9-nfl-engine
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run NFL model unit tests
+        run: python -m unittest -v test_nfl_model
