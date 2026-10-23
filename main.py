@@ -96,3 +96,52 @@ async def kalshi_markets():
         "excluded_combinations": 0, "series_checked": list(NFL_SERIES), "series_errors": errors,
         "note": "Targeted partial scan of NFL game/spread/total series. Not exhaustive. Zero results do not prove no NFL markets exist. Quotes are not FanDuel odds or validated betting probabilities.",
     }
+# GRIDINTEL v1.0 - NFL sportsbook odds
+@app.get("/api/nfl/odds")
+async def nfl_odds():
+    import os
+
+    api_key = os.getenv("ODDS_API_KEY")
+    if not api_key:
+        raise HTTPException(
+            status_code=503,
+            detail="Odds API is not configured"
+        )
+
+    url = (
+        "https://api.the-odds-api.com/v4/"
+        "sports/americanfootball_nfl/odds/"
+    )
+    params = {
+        "apiKey": api_key,
+        "regions": "us",
+        "markets": "h2h",
+        "oddsFormat": "american",
+        "dateFormat": "iso",
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=20.0) as client:
+            response = await client.get(url, params=params)
+            response.raise_for_status()
+            games = response.json()
+    except httpx.HTTPStatusError as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Odds provider returned HTTP {exc.response.status_code}"
+        ) from exc
+    except (httpx.RequestError, ValueError) as exc:
+        raise HTTPException(
+            status_code=502,
+            detail="NFL sportsbook odds temporarily unavailable"
+        ) from exc
+
+    return {
+        "source": "The Odds API",
+        "sport": "NFL",
+        "market": "moneyline",
+        "odds_format": "american",
+        "retrieved_at": datetime.now(timezone.utc).isoformat(),
+        "game_count": len(games),
+        "games": games,
+    }
