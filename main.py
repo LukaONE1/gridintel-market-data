@@ -103,7 +103,10 @@ async def kalshi_markets():
 @app.get("/api/nfl/odds")
 async def nfl_odds():
     import os
+    global odds_cache, odds_cache_time
 
+    if odds_cache is not None and time.monotonic() - odds_cache_time < ODDS_CACHE_TTL:
+        return odds_cache
     api_key = os.getenv("ODDS_API_KEY")
     if not api_key:
         raise HTTPException(
