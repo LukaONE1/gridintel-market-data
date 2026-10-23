@@ -12,7 +12,9 @@ ROOT = Path(__file__).resolve().parent
 BASE = "https://external-api.kalshi.com/trade-api/v2"
 # Known NFL game, spread and total series observed in previous working GRIDINTEL feed.
 NFL_SERIES = ("KXNFLGAME", "KXNFLSPREAD", "KXNFLTOTAL")
-
+ODDS_CACHE_TTL = 300
+odds_cache = None
+odds_cache_time = 0.0
 @app.get("/")
 def home():
     return FileResponse(ROOT / "index.html")
