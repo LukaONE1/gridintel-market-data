@@ -1,5 +1,6 @@
 """GRIDINTEL v0.6: targeted public Kalshi NFL series discovery; paper research only."""
 import asyncio
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 import httpx
