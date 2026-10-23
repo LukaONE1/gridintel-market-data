@@ -44,4 +44,79 @@ function importMarket(m,leg){const title=m.title||m.ticker||'NFL market',i=leg-1
 for(let i=1;i<=3;i++)$('name'+i).addEventListener('input',()=>{if(imports[i-1]&&$('name'+i).value!=='Kalshi YES · '+imports[i-1].title){imports[i-1]=null;$('legMeta'+i).textContent='Manual selection · not verified';correlationWarnings()}});
 async function loadKalshi(){const status=$('kalshiStatus'),out=$('kalshiResults');status.textContent='Loading NFL market quotes from GRIDINTEL service…';out.innerHTML='';try{const res=await fetch('/api/kalshi/markets',{headers:{Accept:'application/json'},cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const data=await res.json();if(!Array.isArray(data.markets))throw Error('Unexpected response');lastKalshiData=data;const ts=data.retrieved_at?new Date(data.retrieved_at).toLocaleString():new Date().toLocaleString();status.textContent=`Kalshi public feed received ${data.count??data.markets.length} matching NFL markets at ${ts}. Partial scan; quote timestamps are not individually verified.`;$('statFeed').textContent='Connected · public Kalshi';renderKalshi()}catch(e){lastKalshiData=null;status.textContent='Market feed unavailable: '+e.message+'. Previous quotes are not shown as live.';$('statFeed').textContent='Unavailable';out.innerHTML=''}}
 $('marketView').addEventListener('change',renderKalshi);$('quotedOnly').addEventListener('change',renderKalshi);$('loadKalshi').addEventListener('click',loadKalshi);document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));document.querySelectorAll('[data-goto]').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.goto)));function showTab(id){document.querySelectorAll('main>section[id]').forEach(s=>s.classList.toggle('hidden',s.id!==id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));window.scrollTo({top:0,behavior:'smooth'})}renderRecords();showTab('dashboard');
+
+// GRIDINTEL v1.0 - NFL Odds Dashboard
+async function loadNflOdds() {
+  const panel = document.getElementById("nflOddsPanel");
+  if (!panel) return;
+
+  panel.textContent = "Loading NFL sportsbook odds...";
+
+  try {
+    const response = await fetch("/api/nfl/odds");
+    if (!response.ok) throw new Error("Odds unavailable");
+
+    const data = await response.json();
+    const games = data.games || [];
+
+    panel.replaceChildren();
+
+    if (!games.length) {
+      panel.textContent = "No NFL odds currently available.";
+      return;
+    }
+
+    for (const game of games) {
+      const card = document.createElement("div");
+      card.className = "source";
+      card.style.marginBottom = "12px";
+
+      const title = document.createElement("h3");
+      title.textContent =
+        game.away_team + " @ " + game.home_team;
+      card.appendChild(title);
+
+      const prices = {};
+      for (const book of game.bookmakers || []) {
+        for (const market of book.markets || []) {
+          if (market.key !== "h2h") continue;
+          for (const outcome of market.outcomes || []) {
+            const previous = prices[outcome.name];
+            if (!previous || outcome.price > previous.price) {
+              prices[outcome.name] = {
+                price: outcome.price,
+                book: book.title
+              };
+            }
+          }
+        }
+      }
+
+      for (const [team, quote] of Object.entries(prices)) {
+        const line = document.createElement("p");
+        const odds = quote.price > 0
+          ? "+" + quote.price
+          : String(quote.price);
+        line.textContent =
+          team + ": " + odds + " (" + quote.book + ")";
+        card.appendChild(line);
+      }
+
+      panel.appendChild(card);
+    }
+  } catch (error) {
+    panel.textContent = "Unable to load NFL odds.";
+  }
+}
+
+const nflSection = document.createElement("section");
+nflSection.className = "card wide";
+nflSection.innerHTML =
+  '<h2>NFL Sportsbook Odds</h2>' +
+  '<p class="notice">Best available moneyline prices. ' +
+  'Sportsbook quotes, not model predictions.</p>' +
+  '<div id="nflOddsPanel">Loading...</div>';
+
+document.querySelector("main").appendChild(nflSection);
+loadNflOdds();
 </script></body></html>
