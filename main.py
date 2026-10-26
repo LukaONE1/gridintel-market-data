@@ -142,7 +142,7 @@ async def nfl_odds():
             detail="NFL sportsbook odds temporarily unavailable"
         ) from exc  
         
-        result = {
+    result = {
         "source": "The Odds API",
         "sport": "NFL",
         "market": "moneyline",
