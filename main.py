@@ -151,6 +151,6 @@ async def nfl_odds():
         "game_count": len(games),
         "games": games,  
         }
-    odds_cache = result
-    odds_cache_time = time.monotonic()
-    return result
+     odds_cache = result
+     odds_cache_time = time.monotonic()
+     return result
