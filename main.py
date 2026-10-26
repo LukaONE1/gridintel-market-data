@@ -149,8 +149,8 @@ async def nfl_odds():
         "odds_format": "american",
         "retrieved_at": datetime.now(timezone.utc).isoformat(),
         "game_count": len(games),
-        "games": games,  
-        }
-     odds_cache = result
-     odds_cache_time = time.monotonic()
-     return result
+        "games": games,
+    }
+    odds_cache = result
+    odds_cache_time = time.monotonic()
+    return result
