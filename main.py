@@ -154,3 +154,24 @@ async def nfl_odds():
     odds_cache = result
     odds_cache_time = time.monotonic()
     return result
+
+
+# GRIDINTEL - Historical NFL data diagnostic
+@app.get("/api/nfl/data-status")
+def nfl_data_status():
+    from nfl_data import inspect_pbp_columns
+
+    try:
+        result = inspect_pbp_columns()
+        return {
+            "status": "success",
+            "source": result["source"],
+            "season": result["season"],
+            "row_count": result["row_count"],
+            "columns": result["columns"],
+        }
+    except Exception as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Historical NFL data inspection failed: {type(exc).__name__}",
+        ) from exc
