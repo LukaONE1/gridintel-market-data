@@ -78,6 +78,7 @@ async function loadNflOdds() {
 
       const prices = {};
       for (const book of game.bookmakers || []) {
+        if (book.key !== "fanduel") continue;
         for (const market of book.markets || []) {
           if (market.key !== "h2h") continue;
           for (const outcome of market.outcomes || []) {
@@ -91,7 +92,7 @@ async function loadNflOdds() {
           }
         }
       }
-
+if (Object.keys(prices).length === 0) continue;
       for (const [team, quote] of Object.entries(prices)) {
         const line = document.createElement("p");
         const odds = quote.price > 0
